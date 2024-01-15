@@ -17,11 +17,10 @@ public class QuoteService {
     @Autowired
     QuoteRepository repository;
 
-    public List<Quote> getIndex() {
+    public List<Quote> getPage(int page) {
         List<Quote> ret = new ArrayList<>();
-        try {
             Map<Integer, String> map = null;
-            map = parser.getIndex();
+            map = parser.getPage(page);
 
             for (var entry : map.entrySet()) {
                 var rawQuote = new Quote();
@@ -32,9 +31,31 @@ public class QuoteService {
                     ret.add(repository.save(rawQuote));
                 }else ret.add(existed.get());
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+
         return ret;
     }
-}
+    public Quote getById(int id){
+        var existingQuote = repository.findByQuoteIdEquals(id);
+        if (existingQuote.isPresent())
+            return existingQuote.get();
+                var quoteEntry = parser.getById(id);
+                if (quoteEntry == null) return null;
+                var newQuote = new Quote();
+                newQuote.setQuoteId(quoteEntry.getKey());
+                newQuote.setText(quoteEntry.getValue());
+                return repository.save(newQuote);
+        }
+    public Quote getRandom(){
+        var quoteEntry = parser.getRandom();
+        if (quoteEntry == null) return null;
+        var existingQuote = repository.findByQuoteIdEquals(quoteEntry.getKey());
+        if (existingQuote.isPresent())
+            return existingQuote.get();
+
+        var newQuote = new Quote();
+        newQuote.setQuoteId(quoteEntry.getKey());
+        newQuote.setText(quoteEntry.getValue());
+        return repository.save(newQuote);
+    }
+    }
+

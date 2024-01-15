@@ -18,9 +18,8 @@ public class M2T8Lesson6Application implements CommandLineRunner {
 	}
 
 	@Override
-	public void run(String... args) throws Exception {
-	var index = service.getIndex();
-		System.out.println(index);
+	public void run(String... args)  {
+
 	}
 
 }
